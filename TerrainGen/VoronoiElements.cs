@@ -76,6 +76,7 @@ namespace TerrainGen
     {
         public Point coord;
         public int sitenbr;
+        public double z;
 
         public Site()
         {
@@ -160,17 +161,19 @@ namespace TerrainGen
         public List<GraphEdge> vor { get; set; }
         public List<Point> vxs { get; set; }
 
-        public List<double> adj { get; set; }
-        public double[] tris { get; set; }
-        public List<Edge> edges { get; set; }
+        public List<AdjacentSites> adj { get; set; }
+        public List<Triangle> tris { get; set; }
+        public List<GraphEdge> edges { get; set; }
         public Size extent { get; set; }
 
-        public void Map(double f)
+        public double Map(Func<double> f)
         {
-            throw new NotImplementedException();
+            double fxnResult = f.Invoke();
+            return fxnResult;
             //var mapped = vxs.map(f);
             //mapped.mesh = mesh;
             //return mapped;
+
         }
     }
     public class AdjacentSites : Site
