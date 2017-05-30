@@ -17,6 +17,8 @@ namespace TerrainGen
         public Random intRandom = new Random();
         public SvgDocument svg = new SvgDocument();
 
+        public List<Cell> voronoiCells { get; private set; }
+
         public TerrainMap(MapParams param)
         {
             this.param = param;
@@ -90,7 +92,11 @@ namespace TerrainGen
             extent = extent.IsEmpty ? param.extent : extent;
             for (int i = 0; i < n; i++)
             {
+
                 voronoi(pts, extent);
+
+                centroid(pts);
+
 
                 //Polygon polygon = new Polygon(graphEdges);
 
@@ -113,6 +119,8 @@ namespace TerrainGen
             //    return a[0] - b[0];
             //});
             improvePoints(1, extent);
+            drawPoints(pts);
+
         }
 
         private int PointComparer(Point a, Point b)
@@ -122,6 +130,21 @@ namespace TerrainGen
 
         private void voronoi(List<Point> pts, Size extent)
         {
+            List<Site> sites = new List<Site>(pts.Capacity);
+            Site site;
+            int i = 0;
+
+            foreach (Point pt in pts)
+            {
+                site = new Site
+                {
+                    sitenbr = -1,
+                    coord = pt,
+                    z = 0
+                };
+                sites.Add(site);
+            }
+
             extent = extent.IsEmpty ? param.extent : extent;
             double w = extent.Width / 2.0;
             double h = extent.Height / 2.0;
@@ -131,6 +154,23 @@ namespace TerrainGen
             double[] ys = pts.Select(y => y.y).ToArray();
             voronoiGraphEdges = v.generateVoronoi(xs, ys, -w, w, -h, h);
 
+            
+            foreach (Site s in sites)
+            {
+                IEnumerable<GraphEdge> edgesForSite = voronoiGraphEdges.Where(ge => ge.site1.coord.x == s.coord.x && ge.site1.coord.y == s.coord.y);
+                s.sitenbr = edgesForSite.First().site1.sitenbr;
+
+            }
+            //voronoiGraphEdges[0].site1
+            voronoiCells = v.GenerateCells(sites);
+
+            //foreach (Cell cell in voronoiCells)
+            //{
+            //    IEnumerable<GraphEdge> graphEdges = voronoiGraphEdges.Where(vge => vge.edgenbr == cell.site.sitenbr);
+            //    cell.halfedges.AddRange();
+            //    centroid()
+            //}
+            //voronoiCells.ForEach(vc => vc.cellHalfedgeStart(vc, vc.halfedges.i) vc.halfedges);
 
             //return d3.voronoi().extent([[-w, -h], [w, h]])(pts);
         }
@@ -639,7 +679,7 @@ namespace TerrainGen
             //}
         }
 
-        private void contour(HeightMap h, double level)
+        private RenderObject contour(HeightMap h, double level)
         {
             //    level = level || 0;
             //    var edges = [];
@@ -655,6 +695,7 @@ namespace TerrainGen
             //}
             //    }
             //    return mergeSegments(edges);
+            return null;
         }
 
         private List<PointF> getRivers(HeightMap h, double limit)
@@ -784,7 +825,7 @@ namespace TerrainGen
             //    adj[seg[1]] = a1;
             //}
             //var done = [];
-            //var paths = [];
+            //var render = [];
             //var path = null;
             //while (true)
             //{
@@ -829,11 +870,11 @@ namespace TerrainGen
             //    }
             //    if (!changed)
             //    {
-            //        paths.push(path);
+            //        render.push(path);
             //        path = null;
             //    }
             //}
-            //return paths;
+            //return render;
         }
 
         private void relaxPath(double path)
@@ -861,10 +902,10 @@ namespace TerrainGen
                 {
                     CenterX = new SvgUnit((float) pts[i].x),
                     CenterY = new SvgUnit((float) pts[i].y),
-                    Radius = new SvgUnit((float) (100 / Math.Sqrt(pts.Count))),
+                    Radius = new SvgUnit((float) (50 / Math.Sqrt(pts.Count))),
+                    Fill = new SvgColourServer(Color.Black),
                     Stroke = new SvgColourServer(Color.Red),
-                    StrokeWidth = 1,
-                    Fill = SvgPaintServer.None
+                    StrokeWidth = 1
                 };
                 group.Children.Add(spCircle);
 
@@ -906,7 +947,7 @@ namespace TerrainGen
             });
         }
 
-        private void visualizeVoronoi(SvgDocument svg, double field, double lo, double hi)
+        private void visualizeVoronoi(SvgDocument svg, HeightMap field, double lo, double hi)
         {
             //if (hi == undefined) hi = d3.max(field) + 1e-9;
             //if (lo == undefined) lo = d3.min(field) - 1e-9;
@@ -932,16 +973,16 @@ namespace TerrainGen
             //drawPaths('river', links);
         }
 
-        private void drawPaths(string cls, List<PointF> paths)
+        private void drawPaths(string cls, RenderObject render)
         {
-            //var paths = svg.selectAll('path.' + cls).data(paths)
-            //paths.enter()
+            //var render = svg.selectAll('path.' + cls).data(render)
+            //render.enter()
             //        .append('path')
             //        .classed(cls, true)
-            //paths.exit()
+            //render.exit()
             //        .remove();
-
-            makeD3Path(paths);
+            
+            makeD3Path(render.rivers);
 
 
             string content = svg.Content;
@@ -966,6 +1007,13 @@ namespace TerrainGen
             Bitmap bitmap = new Bitmap(1000, 1000);
             svg.Draw(bitmap);
             bitmap.Save("kevintest.bmp");
+        }
+
+        private void primDraw(HeightMap h)
+        {
+            HeightMap primH = h;
+            visualizeVoronoi(svg, primH, -1, 1);
+            drawPaths("coast", contour(primH, 0));
         }
 
         private void visualizeSlopes(SvgDocument svg, RenderObject render)
@@ -1308,7 +1356,7 @@ namespace TerrainGen
             //render.coasts = contour(render.h, 0);
             //render.terr = getTerritories(render);
             //render.borders = getBorders(render);
-            drawPaths("river", render.rivers);
+            drawPaths("river", render);
             //drawPaths(svg, 'coast', render.coasts);
             //drawPaths(svg, 'border', render.borders);
             //visualizeSlopes(svg, render);

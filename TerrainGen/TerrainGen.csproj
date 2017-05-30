@@ -48,33 +48,41 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdjacentSites.cs" />
+    <Compile Include="VoronoiElements\AdjacentSites.cs" />
     <Compile Include="Cell.cs" />
-    <Compile Include="Edge.cs" />
+    <Compile Include="VoronoiElements\Edge.cs" />
     <Compile Include="FontSizes.cs" />
-    <Compile Include="GraphEdge.cs" />
-    <Compile Include="Halfedge.cs" />
+    <Compile Include="VoronoiElements\GraphEdge.cs" />
+    <Compile Include="VoronoiElements\Halfedge.cs" />
     <Compile Include="HeightMap.cs" />
+    <Compile Include="MapGenerator.cs" />
     <Compile Include="MapParams.cs" />
-    <Compile Include="Mesh.cs" />
-    <Compile Include="Polygon.cs" />
+    <Compile Include="VoronoiElements\Mesh.cs" />
+    <Compile Include="VoronoiElements\Polygon.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RenderObject.cs" />
-    <Compile Include="Site.cs" />
-    <Compile Include="SiteSorterYX.cs" />
+    <Compile Include="VoronoiElements\Site.cs" />
+    <Compile Include="VoronoiElements\SiteSorterYX.cs" />
     <Compile Include="TerrainMap.cs" />
-    <Compile Include="Triangle.cs" />
-    <Compile Include="VertexId.cs" />
+    <Compile Include="VoronoiElements\Triangle.cs" />
+    <Compile Include="VoronoiElements\VertexId.cs" />
     <Compile Include="Voronoi.cs" />
-    <Compile Include="Point.cs" />
+    <Compile Include="VoronoiElements\Point.cs" />
+    <Compile Include="VoronoiElements\VoronoiElements.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="terrain.js" />
+    <Content Include="notes\js\language.js" />
+    <Content Include="notes\js\priority-queue.js" />
+    <Content Include="notes\terrain\index.html" />
+    <Content Include="notes\js\d3.v4.js" />
+    <Content Include="notes\js\terrain.js" />
+    <Content Include="notes\js\terraincontrols.js" />
+    <Content Include="notes\style.css" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

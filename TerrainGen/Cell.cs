@@ -6,11 +6,28 @@ using System.Threading.Tasks;
 
 namespace TerrainGen
 {
+    public static class VoronoiExtentions
+    {
+        public static List<Cell> GenerateCells(this Voronoi v, IEnumerable<Site> sites)
+        {
+            List<Cell> cells = new List<Cell>();
+            foreach (Site site in sites)
+            {
+                Cell c = new Cell();
+                c.createCell(site);
+                cells.Add(c);
+            }
+            return cells;
+        }
+
+    }
+
+
     public class Cell
     {
-        public object[] site { get; set; }
-        public Halfedge halfedges { get; set; }
-        private Cell cell;
+        public Site site { get; set; }
+        public List<Halfedge> halfedges { get; set; }
+        //private Cell cell;
         private int cellnb; // = new int[] {};
         //        import {createBorderEdge
         //    }
@@ -25,21 +42,16 @@ namespace TerrainGen
 
 
 
-        public Cell createCell(object[] site)
+        public Cell createCell(Site site)
         {
-            //Cell c = new Cell
-            //{
-            //    site = site,
-            //    halfedges = new Halfedge(),
-            //    cellnb = site.edgenbr
+            Cell c = new Cell
+            {
+                site = site,
+                halfedges = new List<Halfedge>(),
+                cellnb = site.sitenbr
+            };
 
-            //};
-            //return c;
-            ////return cells[site.edgenbr] = new Cell()
-            ////    site: site,
-            ////halfedges: []
-            ////};
-            return null;
+            return c;
         }
 
         public double cellHalfedgeAngle(Cell cell, Edge edge)
@@ -72,13 +84,15 @@ namespace TerrainGen
             return 0.0;
         }
 
-        public void cellHalfedgeStart(Cell cell, Edge edge)
+        public Halfedge cellHalfedgeStart(Cell cell, Edge edge)
         {
+            return null;
             //return edge[+(edge.left !== cell.site)];
         }
 
-        public void cellHalfedgeEnd(Cell cell, Edge edge)
+        public Halfedge cellHalfedgeEnd(Cell cell, Edge edge)
         {
+            return null;
             //return edge[+(edge.left === cell.site)];
         }
 

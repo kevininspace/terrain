@@ -15,8 +15,8 @@ namespace TerrainGen
     {
         static Size defaultExtent = new Size()
         {
-            Height = 1000,
-            Width = 1000
+            Height = 400,
+            Width = 400
         };
 
 
@@ -26,7 +26,7 @@ namespace TerrainGen
             MapParams param = new MapParams()
             {
                 extent = defaultExtent,
-                npts = 5, //16384,
+                npts = 20, //16384,
                 ncities = 15,
                 nterrs = 5,
                 fontsizes = new FontSizes()
