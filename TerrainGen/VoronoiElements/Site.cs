@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace TerrainGen
 {
     public class Site
@@ -9,6 +11,9 @@ namespace TerrainGen
         public Site()
         {
             coord = new Point();
+            points = new List<Point>();
         }
+
+        public List<Point> points { get; set; }
     }
 }

@@ -72,8 +72,12 @@ namespace TerrainGen
             return pts;
         }
 
-        private Point centroid(List<Point> pts)
+        private Point centroid(Cell cell)
         {
+            foreach (Halfedge halfedge in cell.halfedges)
+            {
+                
+            }
             double x = 0;
             double y = 0;
             for (int i = 0; i < pts.Count; i++)
@@ -94,8 +98,10 @@ namespace TerrainGen
             {
 
                 voronoi(pts, extent);
-
-                centroid(pts);
+                foreach (Cell voronoiCell in voronoiCells)
+                {
+                    centroid(voronoiCell);
+                }
 
 
                 //Polygon polygon = new Polygon(graphEdges);
@@ -154,12 +160,19 @@ namespace TerrainGen
             double[] ys = pts.Select(y => y.y).ToArray();
             voronoiGraphEdges = v.generateVoronoi(xs, ys, -w, w, -h, h);
 
-            
+            Point p;
             foreach (Site s in sites)
             {
                 IEnumerable<GraphEdge> edgesForSite = voronoiGraphEdges.Where(ge => ge.site1.coord.x == s.coord.x && ge.site1.coord.y == s.coord.y);
-                s.sitenbr = edgesForSite.First().site1.sitenbr;
+                GraphEdge graphEdge = edgesForSite.First();
 
+                p = new Point();
+                p.setPoint(graphEdge.x1, graphEdge.y1);
+                s.points.Add(p);
+                if (graphEdge.site1 != null)
+                {
+                    s.sitenbr = graphEdge.site1.sitenbr;
+                }
             }
             //voronoiGraphEdges[0].site1
             voronoiCells = v.GenerateCells(sites);
